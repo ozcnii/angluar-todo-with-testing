@@ -1,0 +1,7 @@
+<input
+  type="checkbox"
+  [checked]="todo.isDone"
+  (input)="onToggleDone(todo.id)"
+/>
+<span>{{ todo.text }}</span>
+<button (click)="onRemove(todo.id)">Remove</button>

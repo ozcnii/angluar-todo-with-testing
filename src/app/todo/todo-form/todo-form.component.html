@@ -1,0 +1,10 @@
+<form [formGroup]="todoForm" (ngSubmit)="onSubmit()">
+  <input type="text" placeholder="Enter text" formControlName="text" />
+  <button
+    mat-button
+    color="primary"
+    [disabled]="!todoForm.value.text ? 'disabled' : null"
+  >
+    add
+  </button>
+</form>
