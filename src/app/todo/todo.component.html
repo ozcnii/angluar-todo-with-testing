@@ -1,9 +1,5 @@
 <h2>Home page</h2>
 
-<app-todo-form (addTodoEvent)="onAddTodo($event)"></app-todo-form>
+<app-todo-form></app-todo-form>
 
-<app-todo-list
-  [todos]="todos"
-  (toggleTodoEvent)="onToggleDone($event)"
-  (removeTodoEvent)="onRemove($event)"
-></app-todo-list>
+<app-todo-list></app-todo-list>

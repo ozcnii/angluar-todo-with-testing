@@ -1,27 +1,25 @@
-import { Component, EventEmitter, OnInit, Output } from '@angular/core';
+import { Component } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
-import { Todo } from '../todo';
+import { Store } from '@ngrx/store';
+import { TodoStore } from '../todo.models';
+import { addTodo } from '../todo.actions';
 
 @Component({
   selector: 'app-todo-form',
   templateUrl: './todo-form.component.html',
   styleUrls: ['./todo-form.component.css'],
 })
-export class TodoFormComponent implements OnInit {
-  @Output() addTodoEvent = new EventEmitter<Todo>();
+export class TodoFormComponent {
+  constructor(private store: Store<TodoStore>) {}
 
-  todoForm = new FormGroup({
-    text: new FormControl(),
-  });
+  todoForm = new FormGroup({ text: new FormControl() });
 
   onSubmit(): void {
-    this.addTodoEvent.emit({
-      text: this.todoForm.value.text,
-      id: Date.now(),
-      isDone: false,
-    });
+    this.store.dispatch(
+      addTodo({
+        todo: { id: Date.now(), text: this.todoForm.value.text, isDone: false },
+      })
+    );
     this.todoForm.setValue({ text: '' });
   }
-
-  ngOnInit(): void {}
 }

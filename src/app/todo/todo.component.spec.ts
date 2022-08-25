@@ -1,5 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { Todo } from './todo';
+import { Todo } from './todo.models';
 
 import { TodoComponent } from './todo.component';
 

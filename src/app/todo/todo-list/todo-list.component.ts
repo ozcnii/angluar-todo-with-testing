@@ -1,25 +1,17 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { Todo } from '../todo';
+import { Component } from '@angular/core';
+import { Store } from '@ngrx/store';
+import { Observable } from 'rxjs';
+import { Todo, TodoStore } from '../todo.models';
 
 @Component({
   selector: 'app-todo-list',
   templateUrl: './todo-list.component.html',
   styleUrls: ['./todo-list.component.css'],
 })
-export class TodoListComponent implements OnInit {
-  @Input() todos: Todo[] = [];
-  @Output() toggleTodoEvent = new EventEmitter<number>();
-  @Output() removeTodoEvent = new EventEmitter<number>();
+export class TodoListComponent {
+  todos$: Observable<Todo[]>;
 
-  constructor() {}
-
-  ngOnInit(): void {}
-
-  onToggleDone(id: number): void {
-    this.toggleTodoEvent.emit(id);
-  }
-
-  onRemove(id: number): void {
-    this.removeTodoEvent.emit(id);
+  constructor(private store: Store<TodoStore>) {
+    this.todos$ = store.select('todos');
   }
 }

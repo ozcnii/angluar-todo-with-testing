@@ -1,25 +1,23 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { Todo } from '../todo';
+import { Component, Input } from '@angular/core';
+import { Store } from '@ngrx/store';
+import { Todo, TodoStore } from '../todo.models';
+import { removeTodo, toggleDone } from '../todo.actions';
 
 @Component({
   selector: 'app-todo-item',
   templateUrl: './todo-item.component.html',
   styleUrls: ['./todo-item.component.css'],
 })
-export class TodoItemComponent implements OnInit {
+export class TodoItemComponent {
   @Input() todo: Todo = { id: 0, isDone: false, text: '_init' };
-  @Output() toggleTodoEvent = new EventEmitter<number>();
-  @Output() removeTodoEvent = new EventEmitter<number>();
 
-  constructor() {}
+  constructor(private store: Store<TodoStore>) {}
 
-  ngOnInit(): void {}
-
-  onToggleDone(id: number): void {
-    this.toggleTodoEvent.emit(id);
+  onToggleDone(todoId: number): void {
+    this.store.dispatch(toggleDone({ todoId }));
   }
 
-  onRemove(id: number): void {
-    this.removeTodoEvent.emit(id);
+  onRemove(todoId: number): void {
+    this.store.dispatch(removeTodo({ todoId }));
   }
 }

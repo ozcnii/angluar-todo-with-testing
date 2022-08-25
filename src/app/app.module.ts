@@ -7,6 +7,8 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { TodoModule } from './todo/todo.module';
 import { AboutModule } from './about/about.module';
 import { NotFoundModule } from './not-found/not-found.module';
+import { StoreModule } from '@ngrx/store';
+import { todoReducer } from './todo/todo.reducer';
 
 @NgModule({
   declarations: [AppComponent],
@@ -17,6 +19,7 @@ import { NotFoundModule } from './not-found/not-found.module';
     AboutModule,
     NotFoundModule,
     ReactiveFormsModule,
+    StoreModule.forRoot({ todos: todoReducer }, {}),
   ],
   providers: [],
   bootstrap: [AppComponent],
