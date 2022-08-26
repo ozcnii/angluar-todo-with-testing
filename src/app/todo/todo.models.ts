@@ -1,5 +1,3 @@
-import { Store } from '@ngrx/store';
-
 export interface Todo {
   id: number;
   isDone: boolean;
