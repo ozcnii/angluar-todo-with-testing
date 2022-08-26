@@ -1,74 +1,96 @@
-// import { ComponentFixture, TestBed } from '@angular/core/testing';
-// import { Todo } from '../todo.models';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { MockStore, provideMockStore } from '@ngrx/store/testing';
+import { removeTodo, toggleDone } from '../todo.actions';
+import { Todo } from '../todo.models';
 
-// import { TodoItemComponent } from './todo-item.component';
+import { TodoItemComponent } from './todo-item.component';
 
-// describe('TodoItemComponent', () => {
-//   let component: TodoItemComponent;
-//   let fixture: ComponentFixture<TodoItemComponent>;
-//   let native: HTMLElement;
+describe('TodoItemComponent', () => {
+  let component: TodoItemComponent;
+  let fixture: ComponentFixture<TodoItemComponent>;
+  let native: HTMLElement;
+  let mockStore: MockStore;
 
-//   beforeEach(async () => {
-//     await TestBed.configureTestingModule({
-//       declarations: [TodoItemComponent],
-//     }).compileComponents();
+  beforeEach(async () => {
+    await TestBed.configureTestingModule({
+      declarations: [TodoItemComponent],
+      providers: [provideMockStore({ initialState: [] })],
+    }).compileComponents();
 
-//     fixture = TestBed.createComponent(TodoItemComponent);
-//     component = fixture.componentInstance;
-//     fixture.detectChanges();
-//     native = fixture.nativeElement;
-//   });
+    fixture = TestBed.createComponent(TodoItemComponent);
+    component = fixture.componentInstance;
+    fixture.detectChanges();
+    mockStore = TestBed.inject(MockStore);
+    native = fixture.nativeElement;
+  });
 
-//   it('ok', () => {
-//     expect(1).toBe(1);
-//   });
+  it('should render todo from input', () => {
+    const todo: Todo = { id: 1, isDone: true, text: 'some-text' };
+    component.todo = todo;
 
-//   it('should render todo from input', () => {
-//     const todo: Todo = { id: 1, isDone: true, text: 'some-text' };
-//     component.todo = todo;
+    fixture.detectChanges();
+    const input = native.querySelector('input')!;
+    const span = native.querySelector('span')!;
 
-//     fixture.detectChanges();
-//     const input = native.querySelector('input')!;
-//     const span = native.querySelector('span')!;
+    expect(input.checked).toBe(todo.isDone);
+    expect(span.textContent).toBe(todo.text);
+  });
 
-//     expect(input.checked).toBe(todo.isDone);
-//     expect(span.textContent).toBe(todo.text);
-//   });
+  it('should toggle done', () => {
+    const todo: Todo = { id: 1, isDone: true, text: 'some-text' };
+    spyOn(component, 'onToggleDone');
 
-//   it('should toggle done', () => {
-//     const todo: Todo = { id: 1, isDone: true, text: 'some-text' };
+    component.todo = todo;
+    fixture.detectChanges();
 
-//     spyOn(component, 'onToggleDone');
-//     component.toggleTodoEvent.subscribe((v) => {
-//       expect(v).toBe(todo.id);
-//     });
+    const input = native.querySelector('input')!;
 
-//     component.todo = todo;
-//     fixture.detectChanges();
+    input.click();
+    todo.isDone = !todo.isDone;
+    component.todo = todo;
+    fixture.detectChanges();
 
-//     const input = native.querySelector('input')!;
+    expect(component.onToggleDone).toHaveBeenCalled();
+    expect(input.checked).toBe(todo.isDone);
+  });
 
-//     input.click();
-//     todo.isDone = !todo.isDone;
-//     component.todo = todo;
-//     fixture.detectChanges();
+  it('should call dispatch on toggle done ', () => {
+    const todo: Todo = { id: 1, isDone: true, text: 'some-text' };
+    const dispatchSpy = spyOn(mockStore, 'dispatch');
 
-//     expect(component.onToggleDone).toHaveBeenCalled();
-//     expect(input.checked).toBe(todo.isDone);
-//   });
+    component.todo = todo;
+    fixture.detectChanges();
 
-//   it('should remove', () => {
-//     const todo: Todo = { id: 1, isDone: true, text: 'some-text' };
-//     spyOn(component, 'onRemove');
+    const input = native.querySelector('input')!;
 
-//     const button = native.querySelector('button')!;
+    input.click();
+    todo.isDone = !todo.isDone;
+    component.todo = todo;
+    fixture.detectChanges();
 
-//     component.removeTodoEvent.subscribe((v) => {
-//       expect(v).toBe(todo.id);
-//     });
+    expect(input.checked).toBe(todo.isDone);
+    expect(dispatchSpy).toHaveBeenCalledWith(toggleDone({ todoId: todo.id }));
+  });
 
-//     button.click();
+  it('should remove', () => {
+    spyOn(component, 'onRemove');
 
-//     expect(component.onRemove).toHaveBeenCalled();
-//   });
-// });
+    const button = native.querySelector('button')!;
+    button.click();
+
+    expect(component.onRemove).toHaveBeenCalled();
+  });
+
+  it('should call dispatch on remove', () => {
+    const todo: Todo = { id: 1, isDone: true, text: 'some-text' };
+
+    component.todo = todo;
+
+    const dispatchSpy = spyOn(mockStore, 'dispatch');
+
+    const button = native.querySelector('button')!;
+    button.click();
+
+    expect(dispatchSpy).toHaveBeenCalledWith(removeTodo({ todoId: todo.id }));
+  });
+});
